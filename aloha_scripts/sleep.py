@@ -14,6 +14,17 @@ def main():
     puppet_sleep_position = (0, -1.7, 1.55, 0.12, 0.65, 0)
     master_sleep_position = (0, -1.1, 1.24, 0, -0.24, 0)
     move_arms(all_bots, [puppet_sleep_position] * 2, move_time=2)
+    lower_limits = puppet_bot_left.arm.group_info.joint_lower_limits
+    upper_limits = puppet_bot_left.arm.group_info.joint_upper_limits
+    puppet_rest_position = (
+        0,
+        lower_limits[1],
+        upper_limits[2],
+        0.12,
+        0.65,
+        0
+    )
+    move_arms(all_bots, [puppet_rest_position] * 2, move_time=1)
 
 if __name__ == '__main__':
     main()
