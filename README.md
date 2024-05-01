@@ -46,7 +46,8 @@ python one_side_teleop.py right
 The standard proceedure of shutting down the system is to run:
 
 ```sh
-python sleep.py
+python sleep.py left
+python sleep.py right
 ```
 
 waiting for it to finish and stopping the `./launch_robots.sh` with ctrl-c.
