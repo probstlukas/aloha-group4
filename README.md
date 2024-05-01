@@ -1,3 +1,79 @@
+# ALR meets ALOHA
+
+## Software Setup
+
+    cp -r /hdd/interbotix_ws ~/
+
+    cd ~/Downloads
+    curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+    bash Miniforge3-$(uname)-$(uname -m).sh
+    ~/miniforge3/bin/mamba init
+
+then close and open the terminal
+
+    mamba create -n aloha python=3.8.10
+    mamba activate aloha
+    pip install torchvision
+    pip install torch
+    pip install pyquaternion
+    pip install pyyaml
+    pip install rospkg
+    pip install pexpect
+    pip install mujoco==2.3.7
+    pip install dm_control==1.0.14
+    pip install opencv-python
+    pip install matplotlib
+    pip install einops
+    pip install packaging
+    pip install h5py
+    pip install ipython
+
+## Usage
+
+All of the scripts are located at `~/interbotix_ws/src/aloha/aloha_scripts` and
+run from there.
+
+```sh
+cd ~/interbotix_ws/src/aloha/aloha_scripts
+```
+
+### Starting the robot ros interface
+
+> [!CAUTION]
+> **Stopping the script will result in the robots collapsing. Make
+> sure to run `python sleep.py` before stopping, which moves the robots in a safe resting position. See more in [](#safe-shutdown)**
+
+
+```sh
+./launch_robots.sh
+```
+
+### Teleoperation
+
+To test teleoperation run one or both of the following commands:
+
+```sh
+./one_side_teleop.py left
+./one_side_teleop.py right
+```
+
+### Safe shutdown
+
+The standard proceedure of shutting down the system is to run:
+
+```sh
+python sleep.py
+```
+
+waiting for it to finish and stopping the `./launch_robots.sh` with ctrl-c.
+
+> [!CAUTION]
+> **If the movement to the sleeping position fails, make sure to ask a
+> colleague/peer to help you by holding/supporting the arms when shutting down to
+> prevent damage.**
+
+## The following is the original README content of aloha
+
 # ALOHA: A Low-cost Open-source Hardware System for Bimanual Teleoperation
 
 #### Project Website: https://tonyzhaozh.github.io/aloha/
@@ -19,7 +95,7 @@ We suggest using a "heavy-duty" computer if possible.
 
 *In particular, at least 6 USB3 ports are needed. 4 ports for robot connections and 2 ports for cameras.* We have seen cases that a machine was not able to stably connect to all 4 robot arms simultaneously over USB, especially when USB hubs are used.
 
-### Software selection -- OS:
+### Software selection OS
 
 Currently tested and working configurations: 
 - :white_check_mark: Ubuntu 18.04 + ROS 1 noetic
@@ -28,7 +104,7 @@ Currently tested and working configurations:
 Ongoing testing (compatibility effort underway):
 - :construction: ROS 2
 
-### Software installation - ROS:
+### Software installation ROS
 1. Install ROS and interbotix software following https://docs.trossenrobotics.com/interbotix_xsarms_docs/
 2. This will create the directory ``~/interbotix_ws`` which contains ``src``.
 3. git clone this repo inside ``~/interbotix_ws/src``
@@ -38,7 +114,7 @@ Ongoing testing (compatibility effort underway):
 7. go to ``~/interbotix_ws/src/interbotix_ros_toolboxes/interbotix_xs_toolbox/interbotix_xs_modules/src/interbotix_xs_modules/arm.py``, find function ``publish_positions``.
    Change ``self.T_sb = mr.FKinSpace(self.robot_des.M, self.robot_des.Slist, self.joint_commands)`` to ``self.T_sb = None``.
    This prevents the code from calculating FK at every step which delays teleoperation.
-### Hardware installation:
+### Hardware installation
 
 The goal of this section is to run ``roslaunch aloha 4arms_teleop.launch``, which starts
 communication with 4 robots and 4 cameras. It should work after finishing the following steps:
