@@ -37,8 +37,8 @@ then close and open the terminal
 To test teleoperation run one or both of the following commands:
 
 ```sh
-./one_side_teleop.py left
-./one_side_teleop.py right
+python one_side_teleop.py left
+python one_side_teleop.py right
 ```
 
 ### Safe shutdown
