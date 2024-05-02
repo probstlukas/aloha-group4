@@ -17,9 +17,13 @@
 
 then close and open the terminal
 
+    cd <path to aloha>
     mamba env create -f environment.yml
+    mamba activate aloha
 
 ## Usage
+
+All scripts are located in the `aloha_scripts` directory.
 
 ### Starting the robot ros interface
 
@@ -28,27 +32,21 @@ then close and open the terminal
 > sure to run `python sleep.py` before stopping, which moves the robots in a safe resting position. See more in [](#safe-shutdown)**
 
 
-```sh
-./launch_robots.sh
-```
+    ./launch_robots.sh
 
 ### Teleoperation
 
 To test teleoperation run one or both of the following commands:
 
-```sh
-python one_side_teleop.py left
-python one_side_teleop.py right
-```
+    python one_side_teleop.py left
+    python one_side_teleop.py right
 
 ### Safe shutdown
 
 The standard proceedure of shutting down the system is to run:
 
-```sh
-python sleep.py left
-python sleep.py right
-```
+    python sleep.py left
+    python sleep.py right
 
 waiting for it to finish and stopping the `./launch_robots.sh` with ctrl-c.
 
