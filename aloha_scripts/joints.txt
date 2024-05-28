@@ -1,0 +1,18 @@
+Joint-Angles:
+Default_Angle = 0
+    [CCW, CW]
+0 Z-Rotation/Base (0 when arm to the opposite side (left arm points right and vice versa)) 
+    [+Pi, -Pi]
+1 Shoulder (0 at vertical)
+    [-Pi, +Pi]
+2 Elbow (0 at perpendiculat to Joint1)
+    [-Pi, +Pi]
+3 Wristroll (0 when cripper aligned at y-axis)
+    [-Pi, +Pi]
+4 Wristpitch (0 when pointing straigth)
+    [-Pi, +Pi]
+5 Handroll (0 when handle aligned to Wristroll) 
+    [-Pi, +Pi]
+6 Gripper
+    [open, closed]
+    [0.4, -0,345]
