@@ -44,6 +44,11 @@ def press_to_start(master_bot):
     print(f'Started!')
 
 
+running = True
+def stop_loop():
+    global running
+    running = False
+
 def teleop(robot_side):
     """ A standalone function for experimenting with teleoperation. No data recording. """
     print("Custom teleop for simulation")
@@ -59,16 +64,20 @@ def teleop(robot_side):
     with Listener(address, authkey=b'secret password') as listener:
         with listener.accept() as conn:
             print('connection accepted from', listener.last_accepted)
-            while True:
-                master_state_joints = master_bot.dxl.joint_states.position[:6]
-                master_gripper_joint = master_bot.dxl.joint_states.position[6]
+            try:
+                while running:
+                    master_state_joints = master_bot.dxl.joint_states.position[:6]
+                    master_gripper_joint = master_bot.dxl.joint_states.position[6]
 
-                combined = np.array(master_bot.dxl.joint_states.position[:7])
-                print(combined)
-                conn.send(combined)
+                    combined = np.array(master_bot.dxl.joint_states.position[:7])
+                    conn.send(combined)
 
-                # sleep DT
-                time.sleep(DT)
+                    # sleep DT
+                    time.sleep(DT)
+            except KeyboardInterrupt:
+                stop_loop()
+                print("Loop interrupted by user")
+
 
 
 if __name__=='__main__':
