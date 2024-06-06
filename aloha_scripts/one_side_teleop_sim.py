@@ -55,6 +55,7 @@ def teleop(robot_side):
     # For some reason the puppet_bot has to be initialized to activate the master_bot
     puppet_bot = InterbotixManipulatorXS(robot_model="vx300s", group_name="arm", gripper_name="gripper", robot_name=f'puppet_{robot_side}', init_node=True)
     master_bot = InterbotixManipulatorXS(robot_model="wx250s", group_name="arm", gripper_name="gripper", robot_name=f'master_{robot_side}', init_node=False)
+    isLeft = 0 if robot_side == 'left' else 1
 
     prep_robots(master_bot)
     press_to_start(master_bot)
@@ -63,14 +64,17 @@ def teleop(robot_side):
     gripper_command = JointSingleCommand(name="gripper")
     with Listener(address, authkey=b'secret password') as listener:
         with listener.accept() as conn:
+            print(isLeft)
             print('connection accepted from', listener.last_accepted)
             try:
                 while running:
                     master_state_joints = master_bot.dxl.joint_states.position[:6]
                     master_gripper_joint = master_bot.dxl.joint_states.position[6]
 
-                    combined = np.array(master_bot.dxl.joint_states.position[:7])
+                    # combined = np.array(master_bot.dxl.joint_states.position[:7] + 0)
+                    combined = np.array(list(master_state_joints) + [master_gripper_joint, isLeft])
                     conn.send(combined)
+                    print(combined)
 
                     # sleep DT
                     time.sleep(DT)
