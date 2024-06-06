@@ -8,9 +8,12 @@ from interbotix_xs_msgs.msg import JointSingleCommand
 from constants import MASTER2PUPPET_JOINT_FN, DT, START_ARM_POSE, MASTER_GRIPPER_JOINT_MID, PUPPET_GRIPPER_JOINT_CLOSE
 from robot_utils import torque_on, torque_off, move_arms, move_grippers, get_arm_gripper_positions
 import numpy as np
+from real_env import make_real_env, get_action
 
 # import json
 from multiprocessing.connection import Listener
+
+# TODO: Look into robot_utils.py for pid 
 
 address = ('localhost', 6000)
 
@@ -49,32 +52,39 @@ def stop_loop():
     global running
     running = False
 
-def teleop(robot_side):
+def teleop():
     """ A standalone function for experimenting with teleoperation. No data recording. """
     print("Custom teleop for simulation")
     # For some reason the puppet_bot has to be initialized to activate the master_bot
-    puppet_bot = InterbotixManipulatorXS(robot_model="vx300s", group_name="arm", gripper_name="gripper", robot_name=f'puppet_{robot_side}', init_node=True)
-    master_bot = InterbotixManipulatorXS(robot_model="wx250s", group_name="arm", gripper_name="gripper", robot_name=f'master_{robot_side}', init_node=False)
-    isLeft = 0 if robot_side == 'left' else 1
+    puppet_bot_left = InterbotixManipulatorXS(robot_model="vx300s", group_name="arm", gripper_name="gripper", robot_name=f'puppet_left', init_node=True)
+    puppet_bot_right = InterbotixManipulatorXS(robot_model="vx300s", group_name="arm", gripper_name="gripper", robot_name=f'puppet_right', init_node=False)
 
-    prep_robots(master_bot)
-    press_to_start(master_bot)
+    master_bot_left = InterbotixManipulatorXS(robot_model="wx250s", group_name="arm", gripper_name="gripper", robot_name=f'master_left', init_node=False)
+    master_bot_right = InterbotixManipulatorXS(robot_model="wx250s", group_name="arm", gripper_name="gripper", robot_name=f'master_right', init_node=False)
+
+    prep_robots(master_bot_left)
+    prep_robots(master_bot_right)
+
+    press_to_start(master_bot_left)
+    press_to_start(master_bot_right)
 
     ### Teleoperation loop
     gripper_command = JointSingleCommand(name="gripper")
     with Listener(address, authkey=b'secret password') as listener:
         with listener.accept() as conn:
-            print(isLeft)
             print('connection accepted from', listener.last_accepted)
             try:
                 while running:
-                    master_state_joints = master_bot.dxl.joint_states.position[:6]
-                    master_gripper_joint = master_bot.dxl.joint_states.position[6]
+                    # master_state_joints_left = master_bot_left.dxl.joint_states.position[:6]
+                    # master_gripper_joint_left = master_bot_right.dxl.joint_states.position[6]
 
-                    # combined = np.array(master_bot.dxl.joint_states.position[:7] + 0)
-                    combined = np.array(list(master_state_joints) + [master_gripper_joint, isLeft])
-                    conn.send(combined)
-                    print(combined)
+                    # combined_left = np.array(list(master_state_joints_left) + [master_gripper_joint_left, 0])
+                    # combined_right = np.array(list(master_state_joints_left) + [master_gripper_joint_left, 1])
+
+                    action = get_action(master_bot_left, master_bot_right)
+
+                    conn.send(action)
+                    print(action)
 
                     # sleep DT
                     time.sleep(DT)
@@ -85,5 +95,5 @@ def teleop(robot_side):
 
 
 if __name__=='__main__':
-    side = sys.argv[1]
-    teleop(side)
+    # side = sys.argv[1]
+    teleop()
