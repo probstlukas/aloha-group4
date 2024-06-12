@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/bin/bash ./launch_robots.sh
+gnome-terminal -x ./launch_robots.sh
 
-conda activate aloha
-python teleop_sim.sh
+source activate aloha
+python teleop_sim.py
