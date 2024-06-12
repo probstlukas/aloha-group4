@@ -1,5 +1,5 @@
 import time
-import sys
+import sys, signal
 import IPython
 e = IPython.embed
 
@@ -46,11 +46,11 @@ def press_to_start(master_bot):
     torque_off(master_bot)
     print(f'Started!')
 
+def signal_handler(signal, frame):
+    print("\nprogram exiting gracefully")
+    sys.exit(0)
 
-running = True
-def stop_loop():
-    global running
-    running = False
+signal.signal(signal.SIGINT, signal_handler)
 
 def teleop():
     """ A standalone function for experimenting with teleoperation. No data recording. """
