@@ -12,8 +12,7 @@ from real_env import make_real_env, get_action
 
 # import json
 from multiprocessing.connection import Listener
-
-# TODO: Look into robot_utils.py for pid 
+import rospy
 
 address = ('localhost', 6000)
 
@@ -73,33 +72,37 @@ def teleop():
     LINE_UP = '\033[1A'
     LINE_CLEAR = '\x1b[2K'
     gripper_command = JointSingleCommand(name="gripper")
-    with Listener(address, authkey=b'secret password') as listener:
-        with listener.accept() as conn:
-            print('connection accepted from', listener.last_accepted)
+    while (True):
+        try:
+            with Listener(address, authkey=b'secret password') as listener:
+                with listener.accept() as conn:
+                    print('connection accepted from', listener.last_accepted)
 
-            print(f'Action left:')
-            print(f'Action right:')
-            while True:
-                # master_state_joints_left = master_bot_left.dxl.joint_states.position[:6]
-                # master_gripper_joint_left = master_bot_right.dxl.joint_states.position[6]
+                    print(f'Action left:')
+                    print(f'Action right:')
+                    while True:
+                        # master_state_joints_left = master_bot_left.dxl.joint_states.position[:6]
+                        # master_gripper_joint_left = master_bot_right.dxl.joint_states.position[6]
 
-                # combined_left = np.array(list(master_state_joints_left) + [master_gripper_joint_left, 0])
-                # combined_right = np.array(list(master_state_joints_left) + [master_gripper_joint_left, 1])
+                        # combined_left = np.array(list(master_state_joints_left) + [master_gripper_joint_left, 0])
+                        # combined_right = np.array(list(master_state_joints_left) + [master_gripper_joint_left, 1])
 
-                action = get_action(master_bot_left, master_bot_right)
+                        action = get_action(master_bot_left, master_bot_right)
 
-                conn.send(action)
+                        conn.send(action)
 
-                if t % 10 == 0:
-                    print(LINE_UP, end=LINE_CLEAR)
-                    print(LINE_UP, end=LINE_CLEAR)
-                    rounded_action = [f"{x:.3f}" for x in action]
-                    print(f'Action left: {rounded_action[:7]}')
-                    print(f'Action right: {rounded_action[7:]}')
+                        if t % 10 == 0:
+                            print(LINE_UP, end=LINE_CLEAR)
+                            print(LINE_UP, end=LINE_CLEAR)
+                            rounded_action = [f"{x:.3f}" for x in action]
+                            print(f'Action left: {rounded_action[:7]}')
+                            print(f'Action right: {rounded_action[7:]}')
 
-                # sleep DT
-                time.sleep(DT)
-                t += 1
+                        # sleep DT
+                        time.sleep(DT)
+                        t += 1
+        except rospy.service.ServiceException:
+            continue
 
 
 
