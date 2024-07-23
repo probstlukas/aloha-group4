@@ -102,6 +102,19 @@ def teleop():
                         time.sleep(DT)
                         t += 1
         except rospy.service.ServiceException:
+            print("Service exception. Waiting for new connection.")
+            continue
+        except ConnectionResetError:
+            print("Connection reset. Waiting for new connection.")
+            continue
+        except ConnectionAbortedError:
+            print("Connection aborted. Waiting for new connection.")
+            continue
+        except ConnectionRefusedError:
+            print("Connection refused. Waiting for new connection.")
+            continue
+        except Exception as e:
+            print(f"Error: {e}")
             continue
 
 
