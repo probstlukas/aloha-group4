@@ -91,7 +91,7 @@ def teleop():
 
                         conn.send(action)
 
-                        if t % 10 == 0:
+                        if True: #t % 10 == 0:
                             print(LINE_UP, end=LINE_CLEAR)
                             print(LINE_UP, end=LINE_CLEAR)
                             rounded_action = [f"{x:.3f}" for x in action]
